@@ -5,17 +5,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
-import javax.xml.transform.Result;
 import java.io.IOException;
 import java.sql.*;
 
 public class DBUtils {
 
-    private Connection connect;
-    private PreparedStatement prepared;
-    private ResultSet result;
+//    private Connection connect;
+//    private PreparedStatement prepared;
+//    private ResultSet result;
 
     public static void changeScene(ActionEvent event, String fxmlFile, String title, String username, Integer age){
         Parent root = null;
@@ -43,9 +43,11 @@ public class DBUtils {
     }
     public void getUsersCount(ActionEvent event, String username, String password, int age) {
         int countData = 0;
+        Connection connection = connectDb();
+        PreparedStatement prepared = null;
+        ResultSet result = null;
         try{
-            connect = connectDb();
-            prepared = connect.prepareStatement("SELECT COUNT(id) from users;");
+            prepared = connection.prepareStatement("SELECT COUNT(id) from users;");
             result = prepared.executeQuery();
 
 
@@ -54,27 +56,46 @@ public class DBUtils {
         }
     }
 
-    public void loginUser(String email, String password){
-        try {
-
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-    public void signupUser(String username, String email, String password) {
+    public static void signupUser(ActionEvent event, String username, String password, Integer age) {
+        PreparedStatement psCheckUserExistes = null;
+        PreparedStatement prepared = null;
+        Connection connection = connectDb();
+        ResultSet result = null;
         try{
             //TODO: - check is user existed by email
+
             //TODO: - create user
-             connect = connectDb();
-             prepared = connect.prepareStatement("INSERT INTO users (username, email, password) VALUES (?,?,?);");
+             psCheckUserExistes= connection.prepareStatement("SELECT * FROM users WHERE username = ?");
+             psCheckUserExistes.setString(1, username);
+             result = psCheckUserExistes.executeQuery();
+
+             if(result.isBeforeFirst()){ // isBeforeSet() is used to check if result it empty or not
+                 System.out.println("User already exists");
+                 Alert alert = new Alert(Alert.AlertType.ERROR);
+                 alert.setContentText("You cannot use this email");
+                 alert.show();
+             } else {
+                 prepared = connection.prepareStatement("INSERT INTO users (username, password, age) VALUES (?, ?, ?, ?);");
+                 prepared.setString(1, username);
+                 prepared.setString(2, password); //TODO: hash the password first
+                 prepared.setInt(4, age);
+                 prepared.executeUpdate(); // returns nothing
+
+                 // change scene after signing up to the login
+                 changeScene(event, "logged-in.fxml", "Welcome", username, age);
+             }
         } catch (SQLException e){
             e.printStackTrace();
+        } finally {
+            closeConnection(result, prepared, psCheckUserExistes, connection);
         }
     }
 
     public void getAllUsers(){
+        Connection connect = connectDb();
+        PreparedStatement prepared = null;
+        ResultSet result = null;
         try{
-            connect = connectDb();
             prepared = connect.prepareStatement("");
         } catch (SQLException e){
             e.printStackTrace();
@@ -82,14 +103,52 @@ public class DBUtils {
     }
 
     public void deleteUser(){
+        Connection connection = connectDb();
+        PreparedStatement prepared = null;
+        PreparedStatement psCheckUsersExists = null;
+        ResultSet result = null;
         try{
-            connect = connectDb();
-            prepared = connect.prepareStatement("");
+            prepared = connection.prepareStatement("");
         } catch (SQLException e){
             e.printStackTrace();
         }
     }
 
+
+    public static void closeConnection(ResultSet result, PreparedStatement prepared, PreparedStatement psCheckUserExistes, Connection connection){
+        // we've to close resultSet, preparedStatements and connection in that order [optional]
+        if(result != null){
+            try{
+                // the close must be wrapped within try/catch
+                result.close();
+            } catch (SQLException e){
+                e.printStackTrace();
+            }
+        }
+
+        if(psCheckUserExistes != null){
+            try{
+                psCheckUserExistes.close();
+            } catch (SQLException e){
+                e.printStackTrace();
+            }
+        }
+
+        if(prepared != null){
+            try{
+                prepared.close();
+            } catch (SQLException e){
+                e.printStackTrace();
+            }
+        }
+        if (connection != null){
+            try{
+                connection.close();
+            } catch (SQLException e){
+                e.printStackTrace();
+            }
+        }
+    }
     public static Connection connectDb() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -101,5 +160,47 @@ public class DBUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void logUnUser(ActionEvent event, String username, String password){
+        Connection connection = connectDb();
+        PreparedStatement prepared = null;
+        ResultSet result = null;
+
+//        if(username.length() == 0 || password.length() == 0){
+//            Alert alert = new Alert(Alert.AlertType.ERROR);
+//            alert.setContentText("You must provide all of the credentials before logging in!");
+//            alert.show();
+//        }
+
+
+        try{
+            prepared = connection.prepareStatement("SELECT password FROM users WHERE username = ?");
+            prepared.setString(1, username);
+            result = prepared.executeQuery();
+            if(!result.isBeforeFirst()){
+                System.out.println("User not found!");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Provided credentials are not correct!");
+                alert.show();
+            } else {
+                while(result.next()){
+                    String retrievedPassword = result.getString("password");
+                    Integer retrivedAge = result.getInt("age");
+                    if(retrievedPassword.equals(password)){
+                        changeScene(event, "logged-in.fxml","Welcome",username, retrivedAge);
+                    } else {
+                        System.out.println("Passwords did not match!");
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setContentText("Provided credentials are not correct!");
+                        alert.show();
+                    }
+                }
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            closeConnection(result, prepared, null, connection);
+        }
     }
 }

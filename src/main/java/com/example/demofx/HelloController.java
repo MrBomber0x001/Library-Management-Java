@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -14,6 +15,10 @@ public class HelloController implements Initializable {
     @FXML
     private Label welcomeText;
 
+    @FXML
+    private TextField tf_username;
+    @FXML
+    private TextField tf_password;
     @FXML
     private Button btn_login;
 
@@ -27,7 +32,8 @@ public class HelloController implements Initializable {
             public void handle(ActionEvent actionEvent) {
                 System.out.println("clicked");
                 welcomeText.setText("Working");
-                DBUtils.connectDb();
+//                DBUtils.connectDb();
+                DBUtils.logUnUser(actionEvent, tf_username.getText(), tf_password.getText());
             }
         });
 
