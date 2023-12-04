@@ -16,7 +16,7 @@ public class LoggedInController implements Initializable {
     @FXML
     private Label l_logout;
     @FXML
-    private Label l_age;
+    private Label l_email;
     @FXML
     private Button btn_add_book;
     @FXML
@@ -58,9 +58,9 @@ public class LoggedInController implements Initializable {
     }
 
 
-    public void setUserInformation(String username, int age){
+    public void setUserInformation(String username, String email){
         l_logout.setText("Welcome" + username + "!");
-        l_age.setText("Your age is:" +  age);
+        l_email.setText("Your email is:" +  email);
     }
 
     public void addBook(){

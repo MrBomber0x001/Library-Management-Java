@@ -33,14 +33,14 @@ public class HelloController implements Initializable {
                 System.out.println("clicked");
                 welcomeText.setText("Working");
 //                DBUtils.connectDb();
-                DBUtils.logUnUser(actionEvent, tf_username.getText(), tf_password.getText());
+                DBUtils.logInUser(actionEvent, tf_username.getText(), tf_password.getText());
             }
         });
 
         btn_signup.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                DBUtils.changeScene(actionEvent, "logged-in.fxml", "Logged in", null, null);
+                DBUtils.changeScene(actionEvent, "signup.fxml", "Logged in", null, null);
                 System.out.println("clicked!");
                 welcomeText.setText("Workinggggggggggg");
             }

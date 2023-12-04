@@ -17,11 +17,10 @@ this is a library management system
 ```sql
 CREATE TABLE `Users` (
   `id` bigint PRIMARY KEY,
-  `first_name` VARCHAR(50),
-  `last_name` VARCHAR(50),
+  `username` VARCHAR(250),
   `email` VARCHAR(250),
   `password` VARCHAR(16),
-  `role` VARCHAR,
+  `gender` VARCHAR,
   `created_At` timestamp
 );
 
@@ -39,10 +38,11 @@ CREATE TABLE `Books` (
   `user_id` bigint
 );
 
+-- there should be table combinging user and book alone with shelves
+
 ALTER TABLE `Books` ADD FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`);
 
 ALTER TABLE `Books` ADD FOREIGN KEY (`author_id`) REFERENCES `Authors` (`id`);
-
 ```
 
 ## Resources

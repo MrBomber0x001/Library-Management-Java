@@ -17,14 +17,14 @@ public class DBUtils {
 //    private PreparedStatement prepared;
 //    private ResultSet result;
 
-    public static void changeScene(ActionEvent event, String fxmlFile, String title, String username, Integer age){
+    public static void changeScene(ActionEvent event, String fxmlFile, String title, String username, String email){
         Parent root = null;
-        if(username != null && age != null){
+        if(username != null && email != null){
             try{
                 FXMLLoader loader = new FXMLLoader(DBUtils.class.getResource(fxmlFile));
                 root = loader.load(); // we're passing data between different scenes.
                 LoggedInController loggedInController = loader.getController();
-                loggedInController.setUserInformation(username, age);
+                loggedInController.setUserInformation(username, email);
             } catch (IOException e){
                 e.printStackTrace();
             }
@@ -56,7 +56,7 @@ public class DBUtils {
         }
     }
 
-    public static void signupUser(ActionEvent event, String username, String password, Integer age) {
+    public static void signupUser(ActionEvent event, String username, String email, String password, String gender) {
         PreparedStatement psCheckUserExistes = null;
         PreparedStatement prepared = null;
         Connection connection = connectDb();
@@ -75,14 +75,15 @@ public class DBUtils {
                  alert.setContentText("You cannot use this email");
                  alert.show();
              } else {
-                 prepared = connection.prepareStatement("INSERT INTO users (username, password, age) VALUES (?, ?, ?, ?);");
+                 prepared = connection.prepareStatement("INSERT INTO users (username, email, password, gender) VALUES (?, ?, ?, ?);");
                  prepared.setString(1, username);
-                 prepared.setString(2, password); //TODO: hash the password first
-                 prepared.setInt(4, age);
+                 prepared.setString(2, email); //TODO: hash the password first
+                 prepared.setString(3, password);
+                 prepared.setString(4, gender);
                  prepared.executeUpdate(); // returns nothing
 
                  // change scene after signing up to the login
-                 changeScene(event, "logged-in.fxml", "Welcome", username, age);
+                 changeScene(event, "logged-in.fxml", "Welcome", username, email);
              }
         } catch (SQLException e){
             e.printStackTrace();
@@ -162,7 +163,7 @@ public class DBUtils {
         return null;
     }
 
-    public static void logUnUser(ActionEvent event, String username, String password){
+    public static void logInUser(ActionEvent event, String username, String password){
         Connection connection = connectDb();
         PreparedStatement prepared = null;
         ResultSet result = null;
@@ -175,7 +176,7 @@ public class DBUtils {
 
 
         try{
-            prepared = connection.prepareStatement("SELECT password FROM users WHERE username = ?");
+            prepared = connection.prepareStatement("SELECT password, email FROM users WHERE username = ?");
             prepared.setString(1, username);
             result = prepared.executeQuery();
             if(!result.isBeforeFirst()){
@@ -186,9 +187,9 @@ public class DBUtils {
             } else {
                 while(result.next()){
                     String retrievedPassword = result.getString("password");
-                    Integer retrivedAge = result.getInt("age");
+                    String retrivedEmail = result.getString("email");
                     if(retrievedPassword.equals(password)){
-                        changeScene(event, "logged-in.fxml","Welcome",username, retrivedAge);
+                        changeScene(event, "logged-in.fxml","Welcome",username, retrivedEmail);
                     } else {
                         System.out.println("Passwords did not match!");
                         Alert alert = new Alert(Alert.AlertType.ERROR);
