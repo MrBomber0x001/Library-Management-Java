@@ -12,7 +12,10 @@ This is a simple `reading management` system which allows users to
 - authenticate themselves (signing up, login) to the system
 - adding/removing and updating books based on their progress
 
+## PoC (Proof of Concept)
+This is a demo of the running application
 
+![](./assets/walkthrough.mkv);
 ## DB schema
 
 ![Database Schema Diagram](./assets/DB_SCHEMA.png)
