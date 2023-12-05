@@ -13,18 +13,16 @@ import java.sql.*;
 
 public class DBUtils {
 
-//    private Connection connect;
-//    private PreparedStatement prepared;
-//    private ResultSet result;
 
-    public static void changeScene(ActionEvent event, String fxmlFile, String title, String username, String email){
+    //@changeScene -> changes the scene to LoggedIn Dashboard after signing up or logging in.
+    public static void changeScene(ActionEvent event, String fxmlFile, String title, Integer userId, String username, String email){
         Parent root = null;
         if(username != null && email != null){
             try{
                 FXMLLoader loader = new FXMLLoader(DBUtils.class.getResource(fxmlFile));
                 root = loader.load(); // we're passing data between different scenes.
                 LoggedInController loggedInController = loader.getController();
-                loggedInController.setUserInformation(username, email);
+                loggedInController.setUserInformation(userId, username, email);
             } catch (IOException e){
                 e.printStackTrace();
             }
@@ -40,6 +38,10 @@ public class DBUtils {
         stage.setTitle(title);
         stage.setScene(new Scene(root, 600, 400));
         stage.show();
+    }
+
+    public static void changeSceneToAddingBooks(){
+
     }
     public void getUsersCount(ActionEvent event, String username, String password, int age) {
         int countData = 0;
@@ -62,9 +64,7 @@ public class DBUtils {
         Connection connection = connectDb();
         ResultSet result = null;
         try{
-            //TODO: - check is user existed by email
 
-            //TODO: - create user
              psCheckUserExistes= connection.prepareStatement("SELECT * FROM users WHERE username = ?");
              psCheckUserExistes.setString(1, username);
              result = psCheckUserExistes.executeQuery();
@@ -81,9 +81,14 @@ public class DBUtils {
                  prepared.setString(3, password);
                  prepared.setString(4, gender);
                  prepared.executeUpdate(); // returns nothing
-
-                 // change scene after signing up to the login
-                 changeScene(event, "logged-in.fxml", "Welcome", username, email);
+                 prepared = connection.prepareStatement("SELECT user_id FROM users where username = ?");
+                 prepared.setString(1, username);
+                 result = prepared.executeQuery();
+                 while(result.next()){
+                     int user_id = result.getInt("user_id");
+                     // change scene after signing up to the login
+                     changeScene(event, "logged-in.fxml", "Welcome", user_id, username, email);
+                 }
              }
         } catch (SQLException e){
             e.printStackTrace();
@@ -154,7 +159,7 @@ public class DBUtils {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             System.out.println("Connectiing .....");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/javafx_db", "root", "password");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/javafx_demo", "root", "password");
             System.out.println("Database Connected");
             return connection;
         } catch (Exception e) {
@@ -176,7 +181,7 @@ public class DBUtils {
 
 
         try{
-            prepared = connection.prepareStatement("SELECT password, email FROM users WHERE username = ?");
+            prepared = connection.prepareStatement("SELECT user_id, password, email FROM users WHERE username = ?");
             prepared.setString(1, username);
             result = prepared.executeQuery();
             if(!result.isBeforeFirst()){
@@ -188,8 +193,9 @@ public class DBUtils {
                 while(result.next()){
                     String retrievedPassword = result.getString("password");
                     String retrivedEmail = result.getString("email");
+                    int user_id = result.getInt("user_id");
                     if(retrievedPassword.equals(password)){
-                        changeScene(event, "logged-in.fxml","Welcome",username, retrivedEmail);
+                        changeScene(event, "logged-in.fxml","Welcome",user_id, username, retrivedEmail);
                     } else {
                         System.out.println("Passwords did not match!");
                         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -204,4 +210,6 @@ public class DBUtils {
             closeConnection(result, prepared, null, connection);
         }
     }
+
+
 }

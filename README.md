@@ -1,57 +1,49 @@
 ## JavaFX
 
-this is my first time playing around with JavaFX, although it was a terrible idea to put my hand on stinky java because I hate
-it's philosphy, I kinda enjoyed the experienc of building desktop applications :D
 
-this is a library management system
+I've tried to keep the schema as simple as possible as the only goal from this task was to implement what we've learnt in the OOP semester.
+so my focus was on applying OOP examples as much as needed, and I've used my backend knowledge working with database to implement a `GUI`
+application that glue OOP + database + GUI programming together.
+
 
 ## Features
 
-- [ ] the user can login and signup
-- [ ] the user can add add/remove books (joins)
+This is a simple `reading management` system which allows users to
+- authenticate themselves (signing up, login) to the system
+- adding/removing and updating books based on their progress
+
 
 ## DB schema
 
 ![Database Schema Diagram](./assets/DB_SCHEMA.png)
 
 ```sql
-CREATE TABLE `Users` (
-  `id` bigint PRIMARY KEY,
+CREATE TABLE `users` (
+  `user_id` int AUTO_INCREMENT NOT NULL PRIMARY KEY,
   `username` VARCHAR(250),
   `email` VARCHAR(250),
   `password` VARCHAR(16),
-  `gender` VARCHAR,
-  `created_At` timestamp
+  `gender` VARCHAR(250)
 );
 
-CREATE TABLE `Authors` (
-  `id` bigint PRIMARY KEY,
-  `first_name` VARCHAR(50),
-  `last_name` VARCHAR(50)
-);
-
-CREATE TABLE `Books` (
-  `id` bigint PRIMARY KEY,
+CREATE TABLE `books` (
+  `id` int AUTO_INCREMENT NOT NULL PRIMARY KEY,
   `title` VARCHAR(50),
-  `release_date` date,
-  `author_id` bigint,
-  `user_id` bigint
+  `author_name` VARCHAR(50),
+  `user_id` int
 );
 
--- there should be table combinging user and book alone with shelves
 
-ALTER TABLE `Books` ADD FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`);
-
-ALTER TABLE `Books` ADD FOREIGN KEY (`author_id`) REFERENCES `Authors` (`id`);
+ALTER TABLE `books` ADD CONSTRAINT `fk_books_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 ```
 
-## Resources
 
-the main resource was a [youtube](https://www.youtube.com/watch?v=ltX5AtW9v30) video that showed me the way to deal with javaFX, after that I've applied my backend knowledge into this application
-
-## notes
-
-stage is essentially the window of the GUI,
-the scene is what is displayed in this window
-
-a stage can have multiple scenes
+## TODO and log
+- [x] Implement user authentication (signup, login)
+- [x] Implement Book adding feature, prefetching the books for registered or already logged in users
+- [ ] Implement Book Updating/Deletion
+- [ ] Package the application & Dockersize.
+- [x] <https://stackoverflow.com/questions/27556536/javafx-scene-layout-pane-cannot-be-cast-to-javafx-fxml-fxmlloader>
+- [x] Change the schema
+- [x] Read about `ObservalList` (needed to update TableColumns in time);
+- [x] Finish Adding Book -> click add (the user_id is passed automatically, make two constructors (book_id, no book_id)
