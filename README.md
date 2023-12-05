@@ -1,21 +1,29 @@
-## JavaFX
+## Reading Management System.
 
 
-I've tried to keep the schema as simple as possible as the only goal from this task was to implement what we've learnt in the OOP semester.
-so my focus was on applying OOP examples as much as needed, and I've used my backend knowledge working with database to implement a `GUI`
-application that glue OOP + database + GUI programming together.
+I've tried to keep the schema as simple as possible as the only goal of this task was to implement what we've learned in the OOP semester.
+so my focus was on applying OOP examples as much as needed, and I've used my backend knowledge working with a database to implement a `GUI`
+application that glues OOP + database + GUI programming together.
 
+## Tool
+- Database -> `mysql`
+- GUI framework -> `JavaFX`
+- IDE -> `Intellij IDEA community edition`
 
 ## Features
 
 This is a simple `reading management` system which allows users to
-- authenticate themselves (signing up, login) to the system
+- authenticate themselves (signing up, log in) to the system
 - adding/removing and updating books based on their progress
 
 ## PoC (Proof of Concept)
 This is a demo of the running application
 
-![](./assets/walkthrough.mkv);
+
+https://github.com/MrBomber0x001/Library-Management-Java/assets/42917814/85307341-2b91-47ad-a048-53c78a370e28
+
+
+
 ## DB schema
 
 ![Database Schema Diagram](./assets/DB_SCHEMA.png)
@@ -39,6 +47,8 @@ CREATE TABLE `books` (
 
 ALTER TABLE `books` ADD CONSTRAINT `fk_books_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 ```
+
+
 
 
 ## TODO and log
