@@ -49,6 +49,34 @@ ALTER TABLE `books` ADD CONSTRAINT `fk_books_users` FOREIGN KEY (`user_id`) REFE
 ```
 
 
+**DML queries used**:
+
+```sql
+-- get all users
+SELECT * FROM users;
+
+-- count users
+SELECT COUNT(id) FROM users;
+
+-- signup user
+INSERT INTO users (email, password, username, gender) VALUES (?, ?, ?, ?);
+
+-- loging user
+SELECT * FROM users where username = ?;
+
+-- add book
+INSERT INTO books (title, author_name, status, user_id) VALUES (?, ?, ?, ?);
+
+-- update book
+UPDATE books SET title = ?, author_name = ?, status = ? WHERE id = ?
+
+-- delete book
+DELETE FROM books WHERE id = ?;
+
+-- count books for users
+SELECT COUNT(id) FROM books;
+
+```
 
 
 ## TODO and log
