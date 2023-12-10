@@ -1,5 +1,7 @@
 package com.example.demofx;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -15,14 +17,14 @@ public class DBUtils {
 
 
     //@changeScene -> changes the scene to LoggedIn Dashboard after signing up or logging in.
-    public static void changeScene(ActionEvent event, String fxmlFile, String title, Integer userId, String username, String email){
+    public static void changeScene(ActionEvent event, String fxmlFile, String title, Integer userId, String username, String email, ObservableList<Book> list){
         Parent root = null;
         if(username != null && email != null){
             try{
                 FXMLLoader loader = new FXMLLoader(DBUtils.class.getResource(fxmlFile));
                 root = loader.load(); // we're passing data between different scenes.
                 LoggedInController loggedInController = loader.getController();
-                loggedInController.setUserInformation(userId, username, email);
+                loggedInController.setUserInformation(userId, username, email, list);
             } catch (IOException e){
                 e.printStackTrace();
             }
@@ -43,20 +45,7 @@ public class DBUtils {
     public static void changeSceneToAddingBooks(){
 
     }
-    public void getUsersCount(ActionEvent event, String username, String password, int age) {
-        int countData = 0;
-        Connection connection = connectDb();
-        PreparedStatement prepared = null;
-        ResultSet result = null;
-        try{
-            prepared = connection.prepareStatement("SELECT COUNT(id) from users;");
-            result = prepared.executeQuery();
 
-
-        } catch(SQLException e){
-            e.printStackTrace();
-        }
-    }
 
     public static void signupUser(ActionEvent event, String username, String email, String password, String gender) {
         PreparedStatement psCheckUserExistes = null;
@@ -87,7 +76,7 @@ public class DBUtils {
                  while(result.next()){
                      int user_id = result.getInt("user_id");
                      // change scene after signing up to the login
-                     changeScene(event, "logged-in.fxml", "Welcome", user_id, username, email);
+                     changeScene(event, "logged-in.fxml", "Welcome", user_id, username, email, null);
                  }
              }
         } catch (SQLException e){
@@ -97,7 +86,7 @@ public class DBUtils {
         }
     }
 
-    public void getAllUsers(){
+    public void admin_getAllUsers(){
         Connection connect = connectDb();
         PreparedStatement prepared = null;
         ResultSet result = null;
@@ -108,7 +97,7 @@ public class DBUtils {
         }
     }
 
-    public void deleteUser(){
+    public void admin_deleteUser(){
         Connection connection = connectDb();
         PreparedStatement prepared = null;
         PreparedStatement psCheckUsersExists = null;
@@ -179,8 +168,8 @@ public class DBUtils {
 //            alert.show();
 //        }
 
-
         try{
+            assert connection != null;
             prepared = connection.prepareStatement("SELECT user_id, password, email FROM users WHERE username = ?");
             prepared.setString(1, username);
             result = prepared.executeQuery();
@@ -195,7 +184,8 @@ public class DBUtils {
                     String retrivedEmail = result.getString("email");
                     int user_id = result.getInt("user_id");
                     if(retrievedPassword.equals(password)){
-                        changeScene(event, "logged-in.fxml","Welcome",user_id, username, retrivedEmail);
+                        ObservableList<Book> list = getBookList(user_id);
+                        changeScene(event, "logged-in.fxml","Welcome",user_id, username, retrivedEmail, list);
                     } else {
                         System.out.println("Passwords did not match!");
                         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -211,5 +201,56 @@ public class DBUtils {
         }
     }
 
+    public static ObservableList<Book> getBookList(Integer user_id) {
+        ObservableList<Book> bookList = FXCollections.observableArrayList();
+        PreparedStatement prepared = null;
+        Connection connection = DBUtils.connectDb();
+        ResultSet result = null;
+        Book book;
+        try{
+            prepared = connection.prepareStatement("SELECT * FROM books where user_id = ?");
+            prepared.setInt(1, user_id);
+            result = prepared.executeQuery();
+            while(result.next()){
+                int book_id = result.getInt("id");
+                String title = result.getString("title");
+                String author_name = result.getString("author_name");
+                String status = result.getString("status");
+                book = new Book(book_id, title, author_name, status, user_id);
+                bookList.add(book);
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return bookList;
+    }
+
+
+    public static void updateBook(Book book){
+
+    }
+
+
+    public static void deleteBook(Book book){
+
+    }
+
+
+    public static void getTotalBooks(Integer userId){
+
+    }
+
+    public void admin_getUsersCount() {
+        int countData = 0;
+        Connection connection = connectDb();
+        PreparedStatement prepared = null;
+        ResultSet result = null;
+        try{
+            prepared = connection.prepareStatement("SELECT COUNT(id) from users;");
+            result = prepared.executeQuery();
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
+    }
 
 }

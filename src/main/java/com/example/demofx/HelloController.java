@@ -40,7 +40,7 @@ public class HelloController implements Initializable {
         btn_signup.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                DBUtils.changeScene(actionEvent, "signup.fxml", "Logged in", null, null, null);
+                DBUtils.changeScene(actionEvent, "signup.fxml", "Logged in", null, null, null, null);
                 System.out.println("clicked!");
                 welcomeText.setText("Workinggggggggggg");
             }

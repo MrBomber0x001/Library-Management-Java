@@ -55,6 +55,7 @@ ALTER TABLE `books` ADD CONSTRAINT `fk_books_users` FOREIGN KEY (`user_id`) REFE
 - [x] Implement user authentication (signup, login)
 - [x] Implement Book adding feature, prefetching the books for registered or already logged in users
 - [ ] Implement Book Updating/Deletion
+- [x] Implement Export to Excel Functionality
 - [ ] Package the application & Dockersize.
 - [x] <https://stackoverflow.com/questions/27556536/javafx-scene-layout-pane-cannot-be-cast-to-javafx-fxml-fxmlloader>
 - [x] Change the schema
