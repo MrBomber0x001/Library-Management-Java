@@ -1,6 +1,5 @@
 ## Reading Management System.
 
-
 I've tried to keep the schema as simple as possible as the only goal of this task was to implement what we've learned in the OOP semester.
 so my focus was on applying OOP examples as much as needed, and I've used my backend knowledge working with a database to implement a `GUI`
 application that glues OOP + database + GUI programming together.
@@ -12,16 +11,15 @@ application that glues OOP + database + GUI programming together.
 
 ## Features
 
-This is a simple `reading management` system which allows users to
-- authenticate themselves (signing up, log in) to the system
-- adding/removing and updating books based on their progress
+This is a simple `reading management` system which:
+- the user can authenticate himself by signing up and logging in to the system
+- the user can add, remove, delete, and update books based on progress.
+- the user can export data to `Excel` sheet for further analysis
 
 ## PoC (Proof of Concept)
 This is a demo of the running application
 
-
-https://github.com/MrBomber0x001/Library-Management-Java/assets/42917814/85307341-2b91-47ad-a048-53c78a370e28
-
+https://github.com/MrBomber0x001/Library-Management-Java/assets/42917814/4c6fe20d-2687-4c76-96da-83a9388fe14c
 
 
 ## DB schema
@@ -88,6 +86,6 @@ SELECT COUNT(id) FROM books;
 - [x] Change the schema
 - [x] Read about `ObservalList` (needed to update TableColumns in time);
 - [ ] implement UML design and presentation.
-- [ ] upload the new PoC
+- [x] upload the new PoC
 - [ ] FUTURE -> (Refactor totalBook count to be based on tableView rows count only instead of the database)
 - [ ] FUTURE -> Package the application & Dockersize.
