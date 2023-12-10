@@ -84,7 +84,7 @@ public class LoggedInController implements Initializable {
             @Override
             public void handle(ActionEvent actionEvent) {
                 l_welcome.setText("working!");
-                showStudents();
+
             }
         });
 
@@ -124,14 +124,18 @@ public class LoggedInController implements Initializable {
     public void saveBook(){
         Book book = new Book(tf_book_title.getText(), tf_book_author.getText(), tf_book_status.getText());
         addbook(book);
+        showStudents();
     }
 
     @FXML
     public void fillTableView(ObservableList<Book> list){
         //Print to the console the list of books fetched per user
-        for (int i = 0; i < list.size(); i++){
-            System.out.println("book id: " + list.get(i).getId() + ", title: " + list.get(i).getTitle());
+        if(list != null){
+            for (int i = 0; i < list.size(); i++){
+                System.out.println("book id: " + list.get(i).getId() + ", title: " + list.get(i).getTitle());
+            }
         }
+
         colId.setCellValueFactory(new PropertyValueFactory<Book, Integer>("id"));
         colTitle.setCellValueFactory(new PropertyValueFactory<Book, String>("title"));
         colAuthor.setCellValueFactory(new PropertyValueFactory<Book, String>("author_name"));
@@ -244,6 +248,13 @@ public class LoggedInController implements Initializable {
         } catch (SQLException e){
             e.printStackTrace();
         }
+    }
+
+
+    public void clearFields(){
+        tf_book_title.clear();
+        tf_book_status.clear();
+        tf_book_author.clear();
     }
 
 }
