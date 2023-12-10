@@ -20,7 +20,8 @@ This is a simple `reading management` system which allows users to
 This is a demo of the running application
 
 
-https://github.com/MrBomber0x001/Library-Management-Java/assets/42917814/85307341-2b91-47ad-a048-53c78a370e28
+https://github.com/MrBomber0x001/Library-Management-Java/assets/42917814/4c6fe20d-2687-4c76-96da-83a9388fe14c
+
 
 
 
