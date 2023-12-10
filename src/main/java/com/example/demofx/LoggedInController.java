@@ -28,6 +28,8 @@ public class LoggedInController implements Initializable {
     @FXML
     private Label l_email;
     @FXML
+    private Label l_book_count;
+    @FXML
     private Button btn_add_book;
     @FXML
     private Button btn_update_book;
@@ -69,7 +71,7 @@ public class LoggedInController implements Initializable {
 
         btn_update_book.setDisable(true);
         btn_delete_book.setDisable(true);
-
+        updateCount();
         btn_logout.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -89,14 +91,16 @@ public class LoggedInController implements Initializable {
         btn_delete_book.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                l_welcome.setText("Working!!!!!");
+                l_welcome.setText("Working Delete Button");
+                deleteBook();
             }
         });
 
         btn_update_book.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                l_welcome.setText("Working!!!!!!!!!!!!!!!");
+                l_welcome.setText("Working Update Button");
+                updateBook();
             }
         });
 
@@ -111,7 +115,8 @@ public class LoggedInController implements Initializable {
         l_email.setText("Your email is: " +  email);
         l_id.setText("You Id: " + userId);
         user_id = userId;
-        fillTableView(list);;
+        fillTableView(list);
+        updateCount();
     }
 
 
@@ -145,6 +150,7 @@ public class LoggedInController implements Initializable {
             tf_book_status.setText(book.getStatus());
             btn_update_book.setDisable(false);
             btn_delete_book.setDisable(false);
+            updateCount();
 
         } catch (Exception ex){
             ex.printStackTrace();
@@ -193,22 +199,36 @@ public class LoggedInController implements Initializable {
         colAuthor.setCellValueFactory(new PropertyValueFactory<Book, String>("author_name"));
         colStatus.setCellValueFactory(new PropertyValueFactory<Book, String>("status"));
         table_view.setItems(list);
+        updateCount();
     }
 
 
     public void deleteBook(){
+        System.out.println("book id"  + this.book.getId());
+        Book book = new Book(this.book.getId(), tf_book_title.getText(), tf_book_author.getText(), tf_book_status.getText(), user_id);
+        DBUtils.deleteBook(book);
+        showStudents();
+        btn_delete_book.setDisable(true);
+        btn_update_book.setDisable(true);
+        updateCount();
 
     }
 
     public void updateBook(){
-
+        System.out.println("book id" + this.book.getId());
+        Book book = new Book(this.book.getId(), tf_book_title.getText(), tf_book_author.getText(), tf_book_status.getText(), user_id);
+        DBUtils.updateBook(book);
+        showStudents();
+        btn_update_book.setDisable(true);
+        btn_delete_book.setDisable(true);
+        updateCount();
     }
 
-    public void getTotalBooks(Integer userId){
 
+
+    public void updateCount(){
+        l_book_count.setText("Books count: " + DBUtils.getTotalBooks(user_id));
     }
-
-
     public static void addbook(Book book){
         PreparedStatement prepared = null;
         Connection connection = DBUtils.connectDb();

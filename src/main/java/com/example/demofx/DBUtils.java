@@ -9,7 +9,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
+import org.apache.poi.ss.formula.functions.DCount;
 
+import javax.xml.transform.Result;
 import java.io.IOException;
 import java.sql.*;
 
@@ -227,17 +229,54 @@ public class DBUtils {
 
 
     public static void updateBook(Book book){
-
+        Connection connection = connectDb();
+        PreparedStatement prepared;
+        try{
+            prepared = connection.prepareStatement("UPDATE books SET title = ?, author_name = ?, status = ? WHERE id = ?");
+            prepared.setString(1, book.getTitle());
+            prepared.setString(2, book.getAuthor_name());
+            prepared.setString(3, book.getStatus());
+            prepared.setInt(4, book.getId());
+            prepared.executeUpdate();
+            System.out.println("updated");
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
 
     public static void deleteBook(Book book){
+        Connection connection = connectDb();
+        PreparedStatement prepared;
+        try{
+            prepared = connection.prepareStatement("DELETE FROM books WHERE id = ?");
+            prepared.setInt(1, book.getId());
+            prepared.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
 
     }
 
 
-    public static void getTotalBooks(Integer userId){
 
+    public static int getTotalBooks(Integer userId){
+        Connection connection = connectDb();
+        PreparedStatement prepared;
+        ResultSet result;
+        int count = 0;
+        try {
+            prepared = connection.prepareStatement("SELECT COUNT(id) FROM books WHERE user_id = ? ");
+            prepared.setInt(1, userId);
+            result = prepared.executeQuery();
+            while(result.next()){
+                count += result.getInt("COUNT(id)");
+            }
+            return count;
+        } catch (SQLException e){
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     public void admin_getUsersCount() {
